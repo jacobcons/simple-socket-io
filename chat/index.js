@@ -25,11 +25,20 @@ app.use(express.static('public'));
 
 io.on('connection', (socket) => {
   console.log('a user connected');
-  socket.on('chat-message', (msg) => {
-    const { lastInsertRowid } = db
-      .prepare('INSERT INTO messages(content) VALUES (?)')
-      .run(msg);
+  socket.on('chat-message', (msg, clientOffset, callback) => {
+    let lastInsertRowid;
+    try {
+      lastInsertRowid = db
+        .prepare('INSERT INTO messages(content, client_offset) VALUES (?, ?)')
+        .run(msg, clientOffset).lastInsertRowid;
+    } catch (e) {
+      if (e.errono === 19) {
+        callback();
+      }
+      return;
+    }
     io.emit('chat-message', msg, lastInsertRowid);
+    callback();
   });
   if (!socket.recovered) {
     const messages = db

@@ -27,7 +27,9 @@
     const socket = io({
         auth: {
             serverOffset: 0
-        }
+        },
+        ackTimeout: 10000,
+        retries: 3
     });
 
     const form = document.getElementById('form');
@@ -38,7 +40,7 @@
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         if (input.value) {
-            socket.emit('chat-message', input.value);
+            socket.emit('chat-message', input.value, crypto.getRandomValues(new Uint32Array(4)).join(''));
             input.value = '';
         }
     });
