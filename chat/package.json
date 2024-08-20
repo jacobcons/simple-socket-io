@@ -11,6 +11,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "better-sqlite3": "^11.1.2",
     "express": "^4.19.2",
     "morgan": "^1.10.0",
     "pino-http": "^10.2.0",
